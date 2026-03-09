@@ -5,8 +5,9 @@ Projet backend Node.js/Express pour la gestion du recouvrement: clients, facture
 ## Equipe
 
 - Wissem ben slima
+- Seif Bahrouni
 - Houssem Amor
-- Montah Khdhiri
+- Montaha Khdhiri
 
 ## Stack technique
 
@@ -75,39 +76,44 @@ Les modules suivants sont deja implementes dans ce repository:
 
 ## Repartition du travail restant
 
-Le reste du projet est reparti comme suit:
+Le reste du projet est reparti sequentiellement entre les 3 participants:
 
-### Houssem Amor
+### Etape 1 — Houssem Amor
 
-- Module 6: Actions de recouvrement (complet)
+- Module 6: Actions de recouvrement
   - Modele `CollectionAction`
   - Types: `call`, `email`, `visit`, `notice`
   - Endpoints: creation + historique par client/facture
-- Module 9: Tests unitaires de base (partie recouvrement + auth)
-- Module 10: Qualite finale (partie backend)
-  - Revue des routes
-  - Harmonisation des reponses API
-  - Nettoyage du code
-
-### Montaha Khdhiri
-
-- Module 7: Statistiques simples (complet)
+- Module 7: Statistiques simples
   - `GET /api/stats/overview`
   - `GET /api/stats/invoices`
   - `GET /api/stats/agents`
-- Module 8: Documentation Swagger (`/docs`) (complet)
-- Module 9: Tests unitaires de base (partie factures + paiements + stats)
-- Module 10: Livraison finale
+
+### Etape 2 —  Montaha Khdhiri
+
+- Module 8: Documentation Swagger (`/docs`)
+  - Documenter toutes les routes
+- Module 9: Tests unitaires de base
+  - auth login/JWT
+  - validation Joi (cas invalide)
+  - creation facture
+  - enregistrement paiement et changement de statut facture
+  - acces protege par roles
+
+### Etape 3 — Seif Bahrouni
+
+- Module 10: Qualite et livraison
+  - Gestion d'erreurs centralisee (error middleware)
+  - Reponses API coherentes
+  - Nettoyage du code et revue des routes
   - Mise a jour README final
   - Verification finale de la documentation
 
 ## Etapes restantes
 
-- Module 6: Actions de recouvrement (Houssem Amor)
-- Module 7: Statistiques (Montaha Khdhiri)
-- Module 8: Swagger (Montaha Khdhiri)
-- Module 9: Tests unitaires de base complets (Houssem Amor + Montaha Khdhiri)
-- Module 10: Qualite finale + README final (Houssem Amor + Montaha Khdhiri)
+1. Module 6 + 7: Actions de recouvrement + Statistiques (Seif Bahrouni)
+2. Module 8 + 9: Swagger + Tests unitaires (Houssem Amor)
+3. Module 10: Qualite finale + README final (Montaha Khdhiri)
 
 ## Lancer le projet en local
 

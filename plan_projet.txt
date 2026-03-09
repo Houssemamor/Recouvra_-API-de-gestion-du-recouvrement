@@ -1,31 +1,47 @@
 Plan du projet
 Recouvra+ (API de gestion du recouvrement)
 
-1. Cadrage et setup
+Equipe:
+- Wissem ben slima
+- Seif Bahrouni
+- Houssem Amor
+- Montaha Khdhiri
+
+========================================
+TRAVAIL REALISE (Wissem ben slima)
+========================================
+
+1. Cadrage et setup [FAIT]
 - Initialiser le projet Express (Node.js 22).
 - Configurer l'environnement (.env, connexion MongoDB).
 - Installer dependances: express, mongoose, jsonwebtoken, bcrypt, joi, swagger-jsdoc, swagger-ui-express, jest, supertest.
 - Mettre en place une architecture propre: src/config, src/models, src/controllers, src/services, src/routes, src/middlewares, src/validators, tests.
 
-2. Authentification et roles (JWT)
+2. Authentification et roles (JWT) [FAIT]
 - Modele User avec roles: agent, manager, admin.
 - Endpoints: POST /auth/register, POST /auth/login, GET /auth/me.
 - Middleware auth (verification JWT) + middleware authorize(roles).
 
-3. Gestion des clients
+3. Gestion des clients [FAIT]
 - Modele Client (infos contact, statut, metadonnees).
 - Endpoints CRUD: POST /clients, GET /clients, GET /clients/:id, PUT /clients/:id, DELETE /clients/:id.
 - Validation Joi sur toutes les entrees.
 
-4. Gestion des factures impayees
+4. Gestion des factures impayees [FAIT]
 - Modele Invoice (client, montant, echeance, statut).
 - Statuts recommandes: unpaid, partial, paid, in_collection.
 - Endpoints CRUD + filtres (status, date, client).
 
-5. Paiements manuels
+5. Paiements manuels [FAIT]
 - Modele Payment (invoice, montant, date, mode, note).
 - Endpoint: POST /payments.
 - Logique metier: mise a jour automatique du statut facture (partial ou paid).
+
+========================================
+TRAVAIL RESTANT (reparti sequentiellement)
+========================================
+
+--- Etape 1: Houssem Amor ---
 
 6. Actions de recouvrement
 - Modele CollectionAction (type d'action, agent, date, resultat, commentaire).
@@ -41,6 +57,8 @@ Recouvra+ (API de gestion du recouvrement)
   - nombre d'actions par agent
   - top clients en retard
 
+--- Etape 2: Montaha Khdhiri ---
+
 8. Documentation Swagger
 - Documenter toutes les routes (auth, clients, factures, paiements, recouvrement, stats).
 - Exposer /docs.
@@ -54,10 +72,14 @@ Recouvra+ (API de gestion du recouvrement)
   - acces protege par roles
 - Outils: Jest + Supertest.
 
+--- Etape 3: Seif Bahrouni ---
+
 10. Qualite et livraison
 - Gestion d'erreurs centralisee (error middleware).
 - Reponses API coherentes (success, data, message, errors).
 - README propre (installation, scripts, endpoints, roles, variables env).
+- Verification finale de la documentation.
+- Nettoyage du code et revue des routes.
 - Git: commits reguliers par fonctionnalite.
 
 Planning conseille (10 jours)
