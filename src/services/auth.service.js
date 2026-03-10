@@ -34,7 +34,8 @@ async function registerUser(payload) {
     error.statusCode = 409;
     throw error;
   }
-
+ 
+  // will be changed to argon2id issue #1
   const passwordHash = await bcrypt.hash(payload.password, 10);
 
   const user = await User.create({
