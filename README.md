@@ -74,20 +74,37 @@ Les modules suivants sont deja implementes dans ce repository:
   - mise a jour automatique de `invoice.amountPaid`
   - mise a jour automatique du statut facture (`partial` ou `paid`)
 
+### 6) Actions de recouvrement (Houssem Amor)
+
+- Modele `RecoveryAction`
+- Types: `call`, `email`, `visit`, `notice`, `other`
+- Resultats: `pending`, `promise_to_pay`, `paid`, `no_response`, `refused`, `other`
+- CRUD complet:
+  - `POST /api/recovery-actions`
+  - `GET /api/recovery-actions`
+  - `GET /api/recovery-actions/:id`
+  - `PUT /api/recovery-actions/:id`
+  - `DELETE /api/recovery-actions/:id`
+- Filtres: par facture, client, agent, type, resultat, plage de dates
+- Validation Joi sur les entrees
+- Code commente
+
+### 7) Statistiques simples (Houssem Amor)
+
+- `GET /api/stats/overview` — totaux (clients, factures, paiements, actions) + resume financier
+- `GET /api/stats/invoices` — repartition par statut + nombre de factures en retard
+- `GET /api/stats/agents` — nombre d'actions par agent
+- Acces restreint aux roles `manager` et `admin`
+- Code commente
+
 ## Repartition du travail restant
 
-Le reste du projet est reparti sequentiellement entre les 3 participants:
+Le reste du projet est reparti sequentiellement entre les 2 participants restants:
 
-### Etape 1 — Houssem Amor
+### ~~Etape 1 — Houssem Amor~~ Termine
 
-- Module 6: Actions de recouvrement
-  - Modele `CollectionAction`
-  - Types: `call`, `email`, `visit`, `notice`
-  - Endpoints: creation + historique par client/facture
-- Module 7: Statistiques simples
-  - `GET /api/stats/overview`
-  - `GET /api/stats/invoices`
-  - `GET /api/stats/agents`
+- ~~Module 6: Actions de recouvrement~~
+- ~~Module 7: Statistiques simples~~
 
 ### Etape 2 —  Montaha Khdhiri
 
@@ -111,7 +128,7 @@ Le reste du projet est reparti sequentiellement entre les 3 participants:
 
 ## Etapes restantes
 
-1. Module 6 + 7: Actions de recouvrement + Statistiques (Houssem Amor)
+1. ~~Module 6 + 7: Actions de recouvrement + Statistiques (Houssem Amor)~~
 2. Module 8 + 9: Swagger + Tests unitaires (Montaha Khdhiri)
 3. Module 10: Qualite finale + README final (Seif Bahrouni)
 ## Lancer le projet en local
