@@ -106,9 +106,19 @@
  *     summary: Create invoice
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/InvoiceInput'
  *     responses:
  *       201:
  *         description: Invoice created
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 
 /**
@@ -119,9 +129,19 @@
  *     summary: Record manual payment
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PaymentInput'
  *     responses:
  *       201:
  *         description: Payment recorded
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 
 /**
@@ -140,9 +160,19 @@
  *     summary: Create recovery action
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RecoveryActionInput'
  *     responses:
  *       201:
  *         description: Recovery action created
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 
 /**

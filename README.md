@@ -129,8 +129,8 @@ Le reste du projet est reparti sequentiellement entre les 2 participants restant
 ## Etapes restantes
 
 1. ~~Module 6 + 7: Actions de recouvrement + Statistiques (Houssem Amor)~~
-2. Module 8 + 9: Swagger + Tests unitaires (Montaha Khdhiri)
-3. Module 10: Qualite finale + README final (Seif Bahrouni)
+2. ~~Module 8 + 9: Swagger + Tests unitaires (Montaha Khdhiri)~~
+3. ~~Module 10: Qualite finale + README final (Seif Bahrouni)~~
 ## Lancer le projet en local
 
 1. Installer les dependances:

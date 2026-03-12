@@ -45,6 +45,59 @@ const options = {
             status: { type: "string", enum: ["active", "inactive", "blocked"], example: "active" },
           },
         },
+        InvoiceInput: {
+          type: "object",
+          required: ["client", "amountTotal", "dueDate"],
+          properties: {
+            client: { type: "string", example: "507f1f77bcf86cd799439011" },
+            invoiceNumber: { type: "string", example: "FAC-2026-001" },
+            amountTotal: { type: "number", example: 1500 },
+            amountPaid: { type: "number", example: 0 },
+            dueDate: { type: "string", format: "date-time", example: "2026-03-20T00:00:00.000Z" },
+            status: { type: "string", enum: ["unpaid", "partial", "paid", "in_collection"], example: "unpaid" },
+            notes: { type: "string", example: "Premiere facture client" },
+            metadata: {
+              type: "object",
+              additionalProperties: true,
+              example: { source: "erp" },
+            },
+          },
+        },
+        PaymentInput: {
+          type: "object",
+          required: ["invoice", "amount"],
+          properties: {
+            invoice: { type: "string", example: "507f1f77bcf86cd799439012" },
+            amount: { type: "number", example: 450.5 },
+            paymentDate: { type: "string", format: "date-time", example: "2026-03-12T10:00:00.000Z" },
+            method: {
+              type: "string",
+              enum: ["cash", "bank_transfer", "check", "card", "other"],
+              example: "bank_transfer",
+            },
+            note: { type: "string", example: "Paiement partiel verse par virement" },
+          },
+        },
+        RecoveryActionInput: {
+          type: "object",
+          required: ["invoice", "actionType"],
+          properties: {
+            invoice: { type: "string", example: "507f1f77bcf86cd799439012" },
+            actionType: {
+              type: "string",
+              enum: ["call", "email", "visit", "notice", "other"],
+              example: "call",
+            },
+            actionDate: { type: "string", format: "date-time", example: "2026-03-12T14:30:00.000Z" },
+            result: {
+              type: "string",
+              enum: ["pending", "promise_to_pay", "paid", "no_response", "refused", "other"],
+              example: "promise_to_pay",
+            },
+            nextActionDate: { type: "string", format: "date-time", nullable: true, example: "2026-03-19T09:00:00.000Z" },
+            comment: { type: "string", example: "Le client promet un paiement la semaine prochaine" },
+          },
+        },
       },
       responses: {
         Unauthorized: {
