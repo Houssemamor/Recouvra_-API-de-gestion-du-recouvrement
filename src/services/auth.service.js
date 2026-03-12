@@ -1,7 +1,11 @@
-const bcrypt = require("bcrypt");
+const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models/user.model");
 const env = require("../config/env");
+
+const ARGON2_OPTIONS = {
+  type: argon2.argon2id,
+};
 
 function sanitizeUser(userDocument) {
   return {
@@ -35,7 +39,7 @@ async function registerUser(payload) {
     throw error;
   }
 
-  const passwordHash = await bcrypt.hash(payload.password, 10);
+  const passwordHash = await argon2.hash(payload.password, ARGON2_OPTIONS);
 
   const user = await User.create({
     fullName: payload.fullName,
@@ -58,7 +62,7 @@ async function loginUser(payload) {
     throw error;
   }
 
-  const isPasswordValid = await bcrypt.compare(payload.password, user.passwordHash);
+  const isPasswordValid = await argon2.verify(user.passwordHash, payload.password);
   if (!isPasswordValid) {
     const error = new Error("Invalid email or password");
     error.statusCode = 401;
