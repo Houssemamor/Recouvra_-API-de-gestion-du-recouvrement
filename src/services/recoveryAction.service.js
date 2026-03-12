@@ -1,6 +1,12 @@
+// Module 6 - Recovery Actions Service
+// Business logic for creating, listing, reading, updating, and deleting recovery actions.
+// Uses Mongoose population to resolve invoice/client/agent references in responses.
+
 const { RecoveryAction } = require("../models/recoveryAction.model");
 const { Invoice } = require("../models/invoice.model");
 
+// Transforms a Mongoose document into a plain response object.
+// Handles both populated (object) and unpopulated (ObjectId) references gracefully.
 function sanitizeRecoveryAction(actionDocument) {
   const invoiceData = actionDocument.invoice && typeof actionDocument.invoice === "object"
     ? {
@@ -45,6 +51,8 @@ function sanitizeRecoveryAction(actionDocument) {
   };
 }
 
+// Guard: ensures the referenced invoice exists before creating a recovery action.
+// Throws 404 if the invoice ID is invalid or missing from the database.
 async function assertInvoiceExists(invoiceId) {
   const invoice = await Invoice.findById(invoiceId);
   if (!invoice) {
@@ -56,6 +64,8 @@ async function assertInvoiceExists(invoiceId) {
   return invoice;
 }
 
+// Creates a new recovery action. Validates invoice existence, persists the action,
+// then populates references before returning the sanitized result.
 async function createRecoveryAction(payload, actor) {
   await assertInvoiceExists(payload.invoice);
 
@@ -77,6 +87,9 @@ async function createRecoveryAction(payload, actor) {
   return sanitizeRecoveryAction(populated);
 }
 
+// Lists recovery actions with optional filters: invoice, agent, actionType, result,
+// date range (from/to), and client (resolved via invoice lookup).
+// Results are sorted by actionDate descending.
 async function listRecoveryActions(filters = {}) {
   const query = {};
 
@@ -106,6 +119,7 @@ async function listRecoveryActions(filters = {}) {
     }
   }
 
+  // Client filter: find all invoices belonging to the client, then filter actions by those invoices.
   if (filters.client) {
     const invoices = await Invoice.find({ client: filters.client }).select("_id");
     query.invoice = { $in: invoices.map((inv) => inv._id) };
@@ -119,6 +133,7 @@ async function listRecoveryActions(filters = {}) {
   return actions.map(sanitizeRecoveryAction);
 }
 
+// Fetches a single recovery action by its MongoDB _id. Throws 404 if not found.
 async function getRecoveryActionById(actionId) {
   const action = await RecoveryAction.findById(actionId)
     .populate({ path: "invoice", select: "invoiceNumber client", populate: { path: "client", select: "companyName" } })
@@ -133,6 +148,8 @@ async function getRecoveryActionById(actionId) {
   return sanitizeRecoveryAction(action);
 }
 
+// Updates a recovery action by _id. Only fields present in payload are changed.
+// Uses runValidators to enforce schema constraints on the update.
 async function updateRecoveryActionById(actionId, payload) {
   const action = await RecoveryAction.findByIdAndUpdate(actionId, payload, {
     new: true,
@@ -150,6 +167,7 @@ async function updateRecoveryActionById(actionId, payload) {
   return sanitizeRecoveryAction(action);
 }
 
+// Deletes a recovery action by _id. Throws 404 if the action does not exist.
 async function deleteRecoveryActionById(actionId) {
   const deleted = await RecoveryAction.findByIdAndDelete(actionId);
   if (!deleted) {

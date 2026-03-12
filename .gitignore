@@ -1,8 +1,6 @@
-<<<<<<< HEAD
 node_modules/
 .env
 coverage/
-=======
 # Compiled output
 /dist
 /tmp
@@ -48,4 +46,4 @@ Thumbs.db
 
 # Project specific
 /Docs
->>>>>>> 9ca1fcc22d3cfecaed77da53939cee312f7085f1
+

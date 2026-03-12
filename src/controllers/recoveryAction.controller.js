@@ -1,3 +1,10 @@
+// Module 6 - Recovery Actions Controller
+// HTTP handlers for recovery action CRUD. Each handler:
+//   1. Validates input via Joi schemas
+//   2. Delegates to the service layer
+//   3. Returns a consistent JSON response { success, message?, data? }
+// Errors are forwarded to the centralized error middleware via next().
+
 const {
   validateRecoveryActionCreation,
   validateRecoveryActionUpdate,
@@ -12,10 +19,14 @@ const {
   deleteRecoveryActionById,
 } = require("../services/recoveryAction.service");
 
+// Extracts human-readable messages from Joi validation errors.
 function formatJoiError(error) {
   return error.details.map((detail) => detail.message);
 }
 
+// POST /api/recovery-actions — Create a new recovery action.
+// Body: { invoice, actionType, actionDate?, result?, nextActionDate?, comment? }
+// The agent is inferred from the authenticated user (req.user).
 async function create(req, res, next) {
   try {
     const { error, value } = validateRecoveryActionCreation(req.body);
@@ -38,6 +49,8 @@ async function create(req, res, next) {
   }
 }
 
+// GET /api/recovery-actions — List recovery actions with optional query filters.
+// Query params: invoice, client, agent, actionType, result, from, to.
 async function list(req, res, next) {
   try {
     const { error, value } = validateRecoveryActionQuery(req.query);
@@ -59,6 +72,7 @@ async function list(req, res, next) {
   }
 }
 
+// GET /api/recovery-actions/:id — Fetch a single recovery action by ID.
 async function getById(req, res, next) {
   try {
     const idValidation = validateRecoveryActionId(req.params.id);
@@ -79,6 +93,8 @@ async function getById(req, res, next) {
   }
 }
 
+// PUT /api/recovery-actions/:id — Update a recovery action (manager/admin only).
+// Body: partial update with at least one field.
 async function updateById(req, res, next) {
   try {
     const idValidation = validateRecoveryActionId(req.params.id);
@@ -109,6 +125,7 @@ async function updateById(req, res, next) {
   }
 }
 
+// DELETE /api/recovery-actions/:id — Delete a recovery action (manager/admin only).
 async function removeById(req, res, next) {
   try {
     const idValidation = validateRecoveryActionId(req.params.id);

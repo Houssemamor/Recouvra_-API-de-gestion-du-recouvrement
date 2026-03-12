@@ -1,0 +1,1475 @@
+{
+	"info": {
+		"name": "Recouvra+ API",
+		"description": "Full API test collection for Recouvra+ — covers authentication, clients, invoices, payments, recovery actions, and statistics.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "agentToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "clientId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "invoiceId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "recoveryActionId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "0 - Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Health returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('success is true', function () {",
+									"    pm.expect(pm.response.json().success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "1 - Auth (Wissem)",
+			"item": [
+				{
+					"name": "Register Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Admin User\",\n  \"email\": \"admin@recouvra.test\",\n  \"password\": \"Admin123!\",\n  \"role\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "register"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Register returns 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('success is true', function () {",
+									"    pm.expect(pm.response.json().success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Register Agent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Agent User\",\n  \"email\": \"agent@recouvra.test\",\n  \"password\": \"Agent123!\",\n  \"role\": \"agent\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "register"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Register agent returns 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@recouvra.test\",\n  \"password\": \"Admin123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Login returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('saves admin token', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data.token).to.be.a('string');",
+									"    pm.collectionVariables.set('token', data.token);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login Agent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"agent@recouvra.test\",\n  \"password\": \"Agent123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Login agent returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('saves agent token', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data.token).to.be.a('string');",
+									"    pm.collectionVariables.set('agentToken', data.token);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Current User (me)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "me"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Me returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('returns user data', function () {",
+									"    pm.expect(pm.response.json().data).to.have.property('email');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login - Invalid Credentials",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@recouvra.test\",\n  \"password\": \"wrongpassword\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Invalid login returns 401', function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Register - Validation Error",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"not-an-email\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "register"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Validation error returns 400', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test('success is false', function () {",
+									"    pm.expect(pm.response.json().success).to.be.false;",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "2 - Clients (Wissem)",
+			"item": [
+				{
+					"name": "Create Client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"companyName\": \"Acme Corp\",\n  \"contactName\": \"John Doe\",\n  \"email\": \"contact@acme.test\",\n  \"phone\": \"+216 71 000 000\",\n  \"address\": \"123 Main St, Tunis\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": ["{{baseUrl}}"],
+							"path": ["clients"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Create client returns 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('saves clientId', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data.id).to.be.a('string');",
+									"    pm.collectionVariables.set('clientId', data.id);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List Clients",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": ["{{baseUrl}}"],
+							"path": ["clients"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('List clients returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('data is an array', function () {",
+									"    pm.expect(pm.response.json().data).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Client by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/clients/{{clientId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["clients", "{{clientId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Get client returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('returns correct client', function () {",
+									"    pm.expect(pm.response.json().data.id).to.eql(pm.collectionVariables.get('clientId'));",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Update Client",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"contactName\": \"Jane Doe\",\n  \"phone\": \"+216 71 111 111\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clients/{{clientId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["clients", "{{clientId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Update client returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('contact name updated', function () {",
+									"    pm.expect(pm.response.json().data.contactName).to.eql('Jane Doe');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Create Client - Validation Error",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"contactName\": \"No company name\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": ["{{baseUrl}}"],
+							"path": ["clients"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Missing companyName returns 400', function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "3 - Invoices (Wissem)",
+			"item": [
+				{
+					"name": "Create Invoice",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"client\": \"{{clientId}}\",\n  \"invoiceNumber\": \"INV-001\",\n  \"amountTotal\": 5000,\n  \"dueDate\": \"2026-04-15T00:00:00.000Z\",\n  \"notes\": \"First invoice for Acme Corp\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/invoices",
+							"host": ["{{baseUrl}}"],
+							"path": ["invoices"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Create invoice returns 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('saves invoiceId', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data.id).to.be.a('string');",
+									"    pm.collectionVariables.set('invoiceId', data.id);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List Invoices",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/invoices",
+							"host": ["{{baseUrl}}"],
+							"path": ["invoices"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('List invoices returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('data is an array', function () {",
+									"    pm.expect(pm.response.json().data).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List Invoices - Filter by Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/invoices?status=unpaid",
+							"host": ["{{baseUrl}}"],
+							"path": ["invoices"],
+							"query": [
+								{ "key": "status", "value": "unpaid" }
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Filter invoices returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Invoice by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/invoices/{{invoiceId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["invoices", "{{invoiceId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Get invoice returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('returns correct invoice', function () {",
+									"    pm.expect(pm.response.json().data.id).to.eql(pm.collectionVariables.get('invoiceId'));",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Update Invoice",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"notes\": \"Updated notes\",\n  \"status\": \"in_collection\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/invoices/{{invoiceId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["invoices", "{{invoiceId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Update invoice returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Create Invoice - Validation Error",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoiceNumber\": \"INV-BAD\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/invoices",
+							"host": ["{{baseUrl}}"],
+							"path": ["invoices"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Missing required fields returns 400', function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "4 - Payments (Wissem)",
+			"item": [
+				{
+					"name": "Create Payment (Partial)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amount\": 2000,\n  \"method\": \"bank_transfer\",\n  \"note\": \"First partial payment\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["payments"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Create payment returns 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('payment recorded', function () {",
+									"    pm.expect(pm.response.json().success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Create Payment (Remaining)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amount\": 3000,\n  \"method\": \"cash\",\n  \"note\": \"Final payment - fully paid\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["payments"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Create payment returns 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Verify Invoice Status After Payments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/invoices/{{invoiceId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["invoices", "{{invoiceId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Invoice is now paid', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data.status).to.eql('paid');",
+									"    pm.expect(data.amountPaid).to.eql(data.amountTotal);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Create Payment - Validation Error",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": -5\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["payments"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Invalid payment returns 400', function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "5 - Recovery Actions (Houssem)",
+			"item": [
+				{
+					"name": "Create Recovery Action (Agent)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"actionType\": \"call\",\n  \"result\": \"promise_to_pay\",\n  \"nextActionDate\": \"2026-03-20T10:00:00.000Z\",\n  \"comment\": \"Client promised to pay by end of week\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Create recovery action returns 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('saves recoveryActionId', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data.id).to.be.a('string');",
+									"    pm.collectionVariables.set('recoveryActionId', data.id);",
+									"});",
+									"pm.test('actionType is call', function () {",
+									"    pm.expect(pm.response.json().data.actionType).to.eql('call');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Create Recovery Action - Email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"actionType\": \"email\",\n  \"comment\": \"Sent formal email reminder\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Create email action returns 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('result defaults to pending', function () {",
+									"    pm.expect(pm.response.json().data.result).to.eql('pending');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Create Recovery Action - Notice",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"actionType\": \"notice\",\n  \"comment\": \"Formal notice sent via registered mail\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Create notice action returns 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List Recovery Actions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('List returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('data is an array with items', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data).to.be.an('array');",
+									"    pm.expect(data.length).to.be.greaterThan(0);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List Recovery Actions - Filter by Invoice",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions?invoice={{invoiceId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions"],
+							"query": [
+								{ "key": "invoice", "value": "{{invoiceId}}" }
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Filter by invoice returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List Recovery Actions - Filter by Client",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions?client={{clientId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions"],
+							"query": [
+								{ "key": "client", "value": "{{clientId}}" }
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Filter by client returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List Recovery Actions - Filter by Type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions?actionType=call",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions"],
+							"query": [
+								{ "key": "actionType", "value": "call" }
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Filter by actionType returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Recovery Action by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions/{{recoveryActionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions", "{{recoveryActionId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Get by ID returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('returns correct action', function () {",
+									"    pm.expect(pm.response.json().data.id).to.eql(pm.collectionVariables.get('recoveryActionId'));",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Update Recovery Action (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"result\": \"paid\",\n  \"comment\": \"Client paid after phone call follow-up\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions/{{recoveryActionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions", "{{recoveryActionId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Update returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('result updated to paid', function () {",
+									"    pm.expect(pm.response.json().data.result).to.eql('paid');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Update Recovery Action - Agent Forbidden",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comment\": \"Agent trying to update\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions/{{recoveryActionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions", "{{recoveryActionId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Agent update returns 403', function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Create Recovery Action - Validation Error",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"actionType\": \"invalid_type\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Validation error returns 400', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test('success is false', function () {",
+									"    pm.expect(pm.response.json().success).to.be.false;",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Recovery Action - Invalid ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions/invalid-id",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions", "invalid-id"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Invalid ID returns 400', function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Create Recovery Action - No Auth",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"actionType\": \"call\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('No auth returns 401', function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "6 - Statistics (Houssem)",
+			"item": [
+				{
+					"name": "Stats Overview (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/stats/overview",
+							"host": ["{{baseUrl}}"],
+							"path": ["stats", "overview"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Overview returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('has financial data', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data).to.have.property('totalClients');",
+									"    pm.expect(data).to.have.property('totalInvoices');",
+									"    pm.expect(data).to.have.property('totalPayments');",
+									"    pm.expect(data).to.have.property('totalRecoveryActions');",
+									"    pm.expect(data).to.have.property('financial');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Stats Invoices (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/stats/invoices",
+							"host": ["{{baseUrl}}"],
+							"path": ["stats", "invoices"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Invoice stats returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('has byStatus and overdue', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data).to.have.property('byStatus');",
+									"    pm.expect(data).to.have.property('overdue');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Stats Agents (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/stats/agents",
+							"host": ["{{baseUrl}}"],
+							"path": ["stats", "agents"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Agent stats returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('has agent breakdown', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data).to.have.property('totalAgents');",
+									"    pm.expect(data).to.have.property('byAgent');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Stats Overview - Agent Forbidden",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/stats/overview",
+							"host": ["{{baseUrl}}"],
+							"path": ["stats", "overview"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Agent access to stats returns 403', function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Stats Overview - No Auth",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/overview",
+							"host": ["{{baseUrl}}"],
+							"path": ["stats", "overview"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('No auth returns 401', function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "7 - Cleanup",
+			"item": [
+				{
+					"name": "Delete Recovery Action (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recovery-actions/{{recoveryActionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["recovery-actions", "{{recoveryActionId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Delete returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Delete Invoice (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/invoices/{{invoiceId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["invoices", "{{invoiceId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Delete invoice returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Delete Client (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/clients/{{clientId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["clients", "{{clientId}}"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Delete client returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

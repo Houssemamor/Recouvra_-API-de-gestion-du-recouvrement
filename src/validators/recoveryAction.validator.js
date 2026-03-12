@@ -1,8 +1,14 @@
+// Module 6 - Recovery Action Validators
+// Joi schemas for validating input on recovery action endpoints.
+// Reuses ACTION_TYPES and ACTION_RESULTS from the model to stay in sync.
+
 const Joi = require("joi");
 const { ACTION_TYPES, ACTION_RESULTS } = require("../models/recoveryAction.model");
 
+// Reusable schema for validating MongoDB ObjectId strings (24-char hex).
 const mongoIdSchema = Joi.string().hex().length(24).required();
 
+// Schema for POST /api/recovery-actions — all required fields for creation.
 const createRecoveryActionSchema = Joi.object({
   invoice: mongoIdSchema,
   actionType: Joi.string()
@@ -16,6 +22,7 @@ const createRecoveryActionSchema = Joi.object({
   comment: Joi.string().trim().allow("").max(1000).optional(),
 });
 
+// Schema for PUT /api/recovery-actions/:id — partial update, at least one field required.
 const updateRecoveryActionSchema = Joi.object({
   actionType: Joi.string()
     .valid(...ACTION_TYPES)
@@ -28,6 +35,7 @@ const updateRecoveryActionSchema = Joi.object({
   comment: Joi.string().trim().allow("").max(1000).optional(),
 }).min(1);
 
+// Schema for GET /api/recovery-actions query string filters.
 const listRecoveryActionQuerySchema = Joi.object({
   invoice: mongoIdSchema.optional(),
   client: mongoIdSchema.optional(),

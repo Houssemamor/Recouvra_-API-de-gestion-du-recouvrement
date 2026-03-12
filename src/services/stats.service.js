@@ -1,9 +1,16 @@
+// Module 7 - Statistics Service
+// Aggregation queries that power the /api/stats endpoints.
+// Provides: overview counts + financials, invoice breakdown by status, and per-agent action counts.
+
 const { Client } = require("../models/client.model");
 const { Invoice } = require("../models/invoice.model");
 const { Payment } = require("../models/payment.model");
 const { RecoveryAction } = require("../models/recoveryAction.model");
 const { User } = require("../models/user.model");
 
+// GET /api/stats/overview
+// Returns total counts (clients, invoices, payments, recovery actions)
+// and financial summary (totalInvoiced, totalCollected, totalOutstanding).
 async function getOverviewStats() {
   const [totalClients, totalInvoices, totalPayments, totalRecoveryActions] = await Promise.all([
     Client.countDocuments(),
@@ -43,6 +50,9 @@ async function getOverviewStats() {
   };
 }
 
+// GET /api/stats/invoices
+// Returns invoice counts grouped by status and the number of overdue invoices
+// (dueDate in the past and status is not "paid").
 async function getInvoiceStats() {
   const now = new Date();
 
@@ -67,6 +77,9 @@ async function getInvoiceStats() {
   };
 }
 
+// GET /api/stats/agents
+// Aggregates recovery actions per agent using a $lookup to resolve agent details.
+// Returns totalAgents, count of agents with at least one action, and per-agent breakdown.
 async function getAgentStats() {
   const stats = await RecoveryAction.aggregate([
     {

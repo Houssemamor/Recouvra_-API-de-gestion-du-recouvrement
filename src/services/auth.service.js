@@ -38,7 +38,6 @@ async function registerUser(payload) {
     error.statusCode = 409;
     throw error;
   }
-
   const passwordHash = await argon2.hash(payload.password, ARGON2_OPTIONS);
 
   const user = await User.create({
