@@ -106,31 +106,57 @@ Le reste du projet est reparti sequentiellement entre les 2 participants restant
 - ~~Module 6: Actions de recouvrement~~
 - ~~Module 7: Statistiques simples~~
 
-### Etape 2 —  Montaha Khdhiri
+### ~~Etape 2 — Montaha Khdhiri~~ Termine
 
-- Module 8: Documentation Swagger (`/docs`)
-  - Documenter toutes les routes
-- Module 9: Tests unitaires de base
-  - auth login/JWT
-  - validation Joi (cas invalide)
-  - creation facture
-  - enregistrement paiement et changement de statut facture
-  - acces protege par roles
+- ~~Module 8: Documentation Swagger (`/docs`)~~
+  - ~~Documenter toutes les routes~~
+- ~~Module 9: Tests unitaires de base~~
+  - ~~auth login/JWT~~
+  - ~~validation Joi (cas invalide)~~
+  - ~~creation facture~~
+  - ~~enregistrement paiement et changement de statut facture~~
+  - ~~acces protege par roles~~
 
-### Etape 3 — Seif Bahrouni
+### ~~Etape 3 — Seif Bahrouni~~ Termine
 
-- Module 10: Qualite et livraison
-  - Gestion d'erreurs centralisee (error middleware)
-  - Reponses API coherentes
-  - Nettoyage du code et revue des routes
-  - Mise a jour README final
-  - Verification finale de la documentation
+- ~~Module 10: Qualite et livraison~~
+  - ~~Gestion d'erreurs centralisee (error middleware)~~
+  - ~~Reponses API coherentes~~
+  - ~~Nettoyage du code et revue des routes~~
+  - ~~Mise a jour README final~~
+  - ~~Verification finale de la documentation~~
 
 ## Etapes restantes
 
 1. ~~Module 6 + 7: Actions de recouvrement + Statistiques (Houssem Amor)~~
 2. ~~Module 8 + 9: Swagger + Tests unitaires (Montaha Khdhiri)~~
 3. ~~Module 10: Qualite finale + README final (Seif Bahrouni)~~
+
+Toutes les etapes sont terminees.
+
+## API Documentation
+
+### Swagger UI (Interactive)
+
+Une fois le serveur demarre, ouvrir:
+
+```text
+http://localhost:3000/api/docs
+```
+
+Fonctionnalites:
+
+- [x] Try-it-out pour tous les endpoints
+- [x] Support du token JWT (Authorize)
+- [x] Validation schema request/response
+- [x] Documentation des parametres
+
+### API Base URL
+
+```text
+http://localhost:3000/api
+```
+
 ## Lancer le projet en local
 
 1. Installer les dependances:
