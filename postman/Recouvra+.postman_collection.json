@@ -572,8 +572,8 @@
 									"});",
 									"pm.test('saves clientId', function () {",
 									"    var data = pm.response.json().data;",
-									"    pm.expect(data.id).to.be.a('string');",
-									"    pm.collectionVariables.set('clientId', data.id);",
+									"    pm.expect((data.id || data._id)).to.be.a('string');",
+									"    pm.collectionVariables.set('clientId', (data.id || data._id));",
 									"});"
 								]
 							}
@@ -724,7 +724,7 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"pm.test('returns correct client', function () {",
-									"    pm.expect(pm.response.json().data.id).to.eql(pm.collectionVariables.get('clientId'));",
+									"    pm.expect((pm.response.json().data.id || pm.response.json().data._id)).to.eql(pm.collectionVariables.get('clientId'));",
 									"});"
 								]
 							}
@@ -863,8 +863,8 @@
 									"});",
 									"pm.test('saves invoiceId', function () {",
 									"    var data = pm.response.json().data;",
-									"    pm.expect(data.id).to.be.a('string');",
-									"    pm.collectionVariables.set('invoiceId', data.id);",
+									"    pm.expect((data.id || data._id)).to.be.a('string');",
+									"    pm.collectionVariables.set('invoiceId', (data.id || data._id));",
 									"});"
 								]
 							}
@@ -1021,7 +1021,7 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"pm.test('returns correct invoice', function () {",
-									"    pm.expect(pm.response.json().data.id).to.eql(pm.collectionVariables.get('invoiceId'));",
+									"    pm.expect((pm.response.json().data.id || pm.response.json().data._id)).to.eql(pm.collectionVariables.get('invoiceId'));",
 									"});"
 								]
 							}
@@ -1134,7 +1134,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amountPaid\": 2500,\n  \"paymentDate\": \"2026-03-20T00:00:00.000Z\",\n  \"method\": \"cheque\",\n  \"reference\": \"CHQ-12345\"\n}"
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amount\": 2500,\n  \"paymentDate\": \"2026-03-20T00:00:00.000Z\",\n  \"method\": \"check\",\n  \"note\": \"CHQ-12345\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/payments",
@@ -1157,7 +1157,7 @@
 									"});",
 									"pm.test('payment data is valid', function () {",
 									"    var data = pm.response.json().data;",
-									"    pm.expect(data.amountPaid).to.equal(2500);",
+									"    pm.expect(data.amount).to.equal(2500);",
 									"});"
 								]
 							}
@@ -1180,7 +1180,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amountPaid\": 1000,\n  \"paymentDate\": \"2026-03-25T00:00:00.000Z\",\n  \"method\": \"bank_transfer\"\n}"
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amount\": 1000,\n  \"paymentDate\": \"2026-03-25T00:00:00.000Z\",\n  \"method\": \"bank_transfer\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/payments",
@@ -1222,7 +1222,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amountPaid\": 2500,\n  \"paymentDate\": \"2026-03-30T00:00:00.000Z\",\n  \"method\": \"bank_transfer\",\n  \"reference\": \"XFER-789\"\n}"
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amount\": 2500,\n  \"paymentDate\": \"2026-03-30T00:00:00.000Z\",\n  \"method\": \"bank_transfer\",\n  \"note\": \"XFER-789\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/payments",
@@ -1264,7 +1264,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"amountPaid\": 100\n}"
+							"raw": "{\n  \"amount\": 100\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/payments",
@@ -1334,8 +1334,8 @@
 									"});",
 									"pm.test('saves recoveryActionId', function () {",
 									"    var data = pm.response.json().data;",
-									"    pm.expect(data.id).to.be.a('string');",
-									"    pm.collectionVariables.set('recoveryActionId', data.id);",
+									"    pm.expect((data.id || data._id)).to.be.a('string');",
+									"    pm.collectionVariables.set('recoveryActionId', (data.id || data._id));",
 									"});",
 									"pm.test('actionType is call', function () {",
 									"    pm.expect(pm.response.json().data.actionType).to.eql('call');",
@@ -1622,7 +1622,7 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"pm.test('returns correct action', function () {",
-									"    pm.expect(pm.response.json().data.id).to.eql(pm.collectionVariables.get('recoveryActionId'));",
+									"    pm.expect((pm.response.json().data.id || pm.response.json().data._id)).to.eql(pm.collectionVariables.get('recoveryActionId'));",
 									"});"
 								]
 							}
