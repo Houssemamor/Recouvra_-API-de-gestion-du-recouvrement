@@ -1,22 +1,8 @@
-const { validateRegister, validateLogin } = require("../validators/auth.validator");
 const { registerUser, loginUser, findUserById } = require("../services/auth.service");
-
-function formatJoiError(error) {
-  return error.details.map((detail) => detail.message);
-}
 
 async function register(req, res, next) {
   try {
-    const { error, value } = validateRegister(req.body);
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: "Validation error",
-        errors: formatJoiError(error),
-      });
-    }
-
-    const result = await registerUser(value);
+    const result = await registerUser(req.validatedData);
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
@@ -29,16 +15,7 @@ async function register(req, res, next) {
 
 async function login(req, res, next) {
   try {
-    const { error, value } = validateLogin(req.body);
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: "Validation error",
-        errors: formatJoiError(error),
-      });
-    }
-
-    const result = await loginUser(value);
+    const result = await loginUser(req.validatedData);
     return res.status(200).json({
       success: true,
       message: "Login successful",

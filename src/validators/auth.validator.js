@@ -15,15 +15,7 @@ const loginSchema = Joi.object({
   password: Joi.string().required(),
 });
 
-function validateRegister(payload) {
-  return registerSchema.validate(payload, { abortEarly: false });
-}
-
-function validateLogin(payload) {
-  return loginSchema.validate(payload, { abortEarly: false });
-}
-
 module.exports = {
-  validateRegister,
-  validateLogin,
+  registerSchema,
+  loginSchema,
 };
