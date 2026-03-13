@@ -24,6 +24,18 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
 
+    # Provision a live MongoDB instance for integration and E2E tests
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     strategy:
       matrix:
         node-version: [22]
@@ -43,12 +55,40 @@ jobs:
 
       - name: Run Jest tests (JSON output)
         id: tests
+        env:
+          NODE_ENV: test
+          MONGODB_URI: mongodb://127.0.1:27017/recouvra-test
+          JWT_SECRET: supersecret
         run: |
           # Run tests and capture output; allow failure so we can report it.
           npx jest --runInBand --ci --json --outputFile=test-results.json 2>&1 | tee test-output.txt
           TEST_EXIT=$?
           echo "exit_code=$TEST_EXIT" >> "$GITHUB_OUTPUT"
-          exit $TEST_EXIT
+          
+          # Only proceed to E2E tests if unit/integration tests pass
+          if [ $TEST_EXIT -ne 0 ]; then
+            exit $TEST_EXIT
+          fi
+
+      - name: Run Postman E2E Tests (Newman)
+        env:
+          NODE_ENV: test
+          MONGODB_URI: mongodb://127.0.1:27017/recouvra-e2e
+          JWT_SECRET: supersecret
+          PORT: 3000
+        run: |
+          # Start the backend server in the background
+          npm start &
+          
+          # Wait for the health endpoint to become responsive
+          npx -y wait-on http://localhost:3000/api/health
+          
+          # Run the updated Postman collection
+          npx -y newman run ./postman/Recouvra+.postman_collection.json --env-var "baseUrl=http://localhost:3000/api"
+          
+          # Capture Newman exit code and exit properly so the CI knows if it failed
+          NEWMAN_EXIT=$?
+          exit $NEWMAN_EXIT
 
       - name: Upload test results
         if: always()
