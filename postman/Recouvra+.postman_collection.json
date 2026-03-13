@@ -1157,7 +1157,7 @@
 									"});",
 									"pm.test('payment data is valid', function () {",
 									"    var data = pm.response.json().data;",
-									"    pm.expect(data.amount).to.equal(2500);",
+									"    pm.expect(data.payment.amount).to.equal(2500);",
 									"});"
 								]
 							}
