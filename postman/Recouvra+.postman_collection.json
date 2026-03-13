@@ -94,7 +94,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"fullName\": \"Admin User\",\n  \"email\": \"admin@recouvra.test\",\n  \"password\": \"Admin123!\",\n  \"role\": \"admin\"\n}"
+							"raw": "{\n  \"fullName\": \"Admin User\",\n  \"email\": \"admin@recouvra.com\",\n  \"password\": \"Admin123!\",\n  \"role\": \"admin\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/register",
@@ -136,7 +136,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"fullName\": \"Manager User\",\n  \"email\": \"manager@recouvra.test\",\n  \"password\": \"Manager123!\",\n  \"role\": \"manager\"\n}"
+							"raw": "{\n  \"fullName\": \"Manager User\",\n  \"email\": \"manager@recouvra.com\",\n  \"password\": \"Manager123!\",\n  \"role\": \"manager\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/register",
@@ -178,7 +178,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"fullName\": \"Agent User\",\n  \"email\": \"agent@recouvra.test\",\n  \"password\": \"Agent123!\",\n  \"role\": \"agent\"\n}"
+							"raw": "{\n  \"fullName\": \"Agent User\",\n  \"email\": \"agent@recouvra.com\",\n  \"password\": \"Agent123!\",\n  \"role\": \"agent\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/register",
@@ -217,7 +217,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin@recouvra.test\",\n  \"password\": \"Admin123!\"\n}"
+							"raw": "{\n  \"email\": \"admin@recouvra.com\",\n  \"password\": \"Admin123!\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
@@ -261,7 +261,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"manager@recouvra.test\",\n  \"password\": \"Manager123!\"\n}"
+							"raw": "{\n  \"email\": \"manager@recouvra.com\",\n  \"password\": \"Manager123!\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
@@ -305,7 +305,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"agent@recouvra.test\",\n  \"password\": \"Agent123!\"\n}"
+							"raw": "{\n  \"email\": \"agent@recouvra.com\",\n  \"password\": \"Agent123!\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
@@ -459,7 +459,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin@recouvra.test\",\n  \"password\": \"wrongpassword\"\n}"
+							"raw": "{\n  \"email\": \"admin@recouvra.com\",\n  \"password\": \"wrongpassword\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
@@ -549,7 +549,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"companyName\": \"Acme Corp\",\n  \"contactName\": \"John Doe\",\n  \"email\": \"contact@acme.test\",\n  \"phone\": \"+216 71 000 000\",\n  \"address\": \"123 Main St, Tunis\"\n}"
+							"raw": "{\n  \"companyName\": \"Acme Corp\",\n  \"contactName\": \"John Doe\",\n  \"email\": \"contact@acme.com\",\n  \"phone\": \"+216 71 000 000\",\n  \"address\": \"123 Main St, Tunis\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/clients",
@@ -596,7 +596,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"companyName\": \"Another Corp\",\n  \"contactName\": \"Jane Doe\",\n  \"email\": \"contact@anothercorp.test\",\n  \"phone\": \"+216 71 111 111\",\n  \"address\": \"456 Side St, Sfax\"\n}"
+							"raw": "{\n  \"companyName\": \"Another Corp\",\n  \"contactName\": \"Jane Doe\",\n  \"email\": \"contact@anothercorp.com\",\n  \"phone\": \"+216 71 111 111\",\n  \"address\": \"456 Side St, Sfax\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/clients",
