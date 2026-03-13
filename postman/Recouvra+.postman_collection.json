@@ -1,7 +1,7 @@
 {
 	"info": {
 		"name": "Recouvra+ API",
-		"description": "Full API test collection for Recouvra+ — covers authentication, clients, invoices, payments, recovery actions, and statistics.",
+		"description": "Full API test collection for Recouvra+ — covers authentication, clients, invoices, payments, recovery actions, and statistics. Roles: agent, manager, admin.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -11,7 +11,12 @@
 			"type": "string"
 		},
 		{
-			"key": "token",
+			"key": "adminToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "managerToken",
 			"value": "",
 			"type": "string"
 		},
@@ -38,7 +43,7 @@
 	],
 	"item": [
 		{
-			"name": "0 - Health",
+			"name": "0 - Health Check",
 			"item": [
 				{
 					"name": "Health Check",
@@ -47,8 +52,12 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/health",
-							"host": ["{{baseUrl}}"],
-							"path": ["health"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
 						}
 					},
 					"event": [
@@ -71,14 +80,17 @@
 			]
 		},
 		{
-			"name": "1 - Auth (Wissem)",
+			"name": "1 - Auth Setup",
 			"item": [
 				{
-					"name": "Register Admin",
+					"name": "Register Admin User",
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -86,8 +98,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/register",
-							"host": ["{{baseUrl}}"],
-							"path": ["auth", "register"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
 						}
 					},
 					"event": [
@@ -108,20 +125,28 @@
 					]
 				},
 				{
-					"name": "Register Agent",
+					"name": "Register Manager User",
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"fullName\": \"Agent User\",\n  \"email\": \"agent@recouvra.test\",\n  \"password\": \"Agent123!\",\n  \"role\": \"agent\"\n}"
+							"raw": "{\n  \"fullName\": \"Manager User\",\n  \"email\": \"manager@recouvra.test\",\n  \"password\": \"Manager123!\",\n  \"role\": \"manager\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/register",
-							"host": ["{{baseUrl}}"],
-							"path": ["auth", "register"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
 						}
 					},
 					"event": [
@@ -130,7 +155,49 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test('Register agent returns 201', function () {",
+									"pm.test('Register returns 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('success is true', function () {",
+									"    pm.expect(pm.response.json().success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Register Agent User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Agent User\",\n  \"email\": \"agent@recouvra.test\",\n  \"password\": \"Agent123!\",\n  \"role\": \"agent\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Register returns 201', function () {",
 									"    pm.response.to.have.status(201);",
 									"});"
 								]
@@ -143,7 +210,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -151,8 +221,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
-							"host": ["{{baseUrl}}"],
-							"path": ["auth", "login"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
 						}
 					},
 					"event": [
@@ -167,7 +242,51 @@
 									"pm.test('saves admin token', function () {",
 									"    var data = pm.response.json().data;",
 									"    pm.expect(data.token).to.be.a('string');",
-									"    pm.collectionVariables.set('token', data.token);",
+									"    pm.collectionVariables.set('adminToken', data.token);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login Manager",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"manager@recouvra.test\",\n  \"password\": \"Manager123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Login returns 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('saves manager token', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data.token).to.be.a('string');",
+									"    pm.collectionVariables.set('managerToken', data.token);",
 									"});"
 								]
 							}
@@ -179,7 +298,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -187,8 +309,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
-							"host": ["{{baseUrl}}"],
-							"path": ["auth", "login"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
 						}
 					},
 					"event": [
@@ -197,7 +324,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test('Login agent returns 200', function () {",
+									"pm.test('Login returns 200', function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"pm.test('saves agent token', function () {",
@@ -211,16 +338,24 @@
 					]
 				},
 				{
-					"name": "Get Current User (me)",
+					"name": "Get Current User (me) - Admin",
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/auth/me",
-							"host": ["{{baseUrl}}"],
-							"path": ["auth", "me"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
 						}
 					},
 					"event": [
@@ -232,8 +367,80 @@
 									"pm.test('Me returns 200', function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
-									"pm.test('returns user data', function () {",
-									"    pm.expect(pm.response.json().data).to.have.property('email');",
+									"pm.test('returns user data with role admin', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data).to.have.property('email');",
+									"    pm.expect(data.role).to.eql('admin');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Manager Area - Admin Access",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/manager-area",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"manager-area"
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Manager area accessible to admin', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Manager Area - Agent Forbidden",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/manager-area",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"manager-area"
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Agent forbidden from manager area', function () {",
+									"    pm.response.to.have.status(403);",
 									"});"
 								]
 							}
@@ -245,7 +452,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -253,8 +463,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
-							"host": ["{{baseUrl}}"],
-							"path": ["auth", "login"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
 						}
 					},
 					"event": [
@@ -276,7 +491,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -284,8 +502,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/register",
-							"host": ["{{baseUrl}}"],
-							"path": ["auth", "register"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
 						}
 					},
 					"event": [
@@ -308,15 +531,21 @@
 			]
 		},
 		{
-			"name": "2 - Clients (Wissem)",
+			"name": "2 - Clients",
 			"item": [
 				{
-					"name": "Create Client",
+					"name": "Create Client - Manager",
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -324,8 +553,12 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/clients",
-							"host": ["{{baseUrl}}"],
-							"path": ["clients"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							]
 						}
 					},
 					"event": [
@@ -348,16 +581,65 @@
 					]
 				},
 				{
-					"name": "List Clients",
+					"name": "Create Client - Agent Forbidden",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"companyName\": \"Another Corp\",\n  \"contactName\": \"Jane Doe\",\n  \"email\": \"contact@anothercorp.test\",\n  \"phone\": \"+216 71 111 111\",\n  \"address\": \"456 Side St, Sfax\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Agent cannot create client (403)', function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List Clients - Manager",
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/clients",
-							"host": ["{{baseUrl}}"],
-							"path": ["clients"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							]
 						}
 					},
 					"event": [
@@ -378,16 +660,58 @@
 					]
 				},
 				{
+					"name": "List Clients - Agent",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Agent can list clients (200)', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
 					"name": "Get Client by ID",
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/clients/{{clientId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["clients", "{{clientId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients",
+								"{{clientId}}"
+							]
 						}
 					},
 					"event": [
@@ -408,12 +732,18 @@
 					]
 				},
 				{
-					"name": "Update Client",
+					"name": "Update Client - Manager",
 					"request": {
 						"method": "PUT",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -421,8 +751,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/clients/{{clientId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["clients", "{{clientId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients",
+								"{{clientId}}"
+							]
 						}
 					},
 					"event": [
@@ -447,8 +782,14 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -456,8 +797,12 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/clients",
-							"host": ["{{baseUrl}}"],
-							"path": ["clients"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							]
 						}
 					},
 					"event": [
@@ -477,15 +822,21 @@
 			]
 		},
 		{
-			"name": "3 - Invoices (Wissem)",
+			"name": "3 - Invoices",
 			"item": [
 				{
-					"name": "Create Invoice",
+					"name": "Create Invoice - Manager",
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -493,8 +844,12 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/invoices",
-							"host": ["{{baseUrl}}"],
-							"path": ["invoices"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"invoices"
+							]
 						}
 					},
 					"event": [
@@ -517,16 +872,65 @@
 					]
 				},
 				{
-					"name": "List Invoices",
+					"name": "Create Invoice - Agent Forbidden",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"client\": \"{{clientId}}\",\n  \"invoiceNumber\": \"INV-002\",\n  \"amountTotal\": 3000,\n  \"dueDate\": \"2026-05-15T00:00:00.000Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/invoices",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"invoices"
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Agent cannot create invoice (403)', function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List Invoices - Manager",
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/invoices",
-							"host": ["{{baseUrl}}"],
-							"path": ["invoices"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"invoices"
+							]
 						}
 					},
 					"event": [
@@ -551,14 +955,24 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/invoices?status=unpaid",
-							"host": ["{{baseUrl}}"],
-							"path": ["invoices"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"invoices"
+							],
 							"query": [
-								{ "key": "status", "value": "unpaid" }
+								{
+									"key": "status",
+									"value": "unpaid"
+								}
 							]
 						}
 					},
@@ -581,12 +995,20 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/invoices/{{invoiceId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["invoices", "{{invoiceId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"invoices",
+								"{{invoiceId}}"
+							]
 						}
 					},
 					"event": [
@@ -607,12 +1029,18 @@
 					]
 				},
 				{
-					"name": "Update Invoice",
+					"name": "Update Invoice - Manager",
 					"request": {
 						"method": "PUT",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -620,8 +1048,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/invoices/{{invoiceId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["invoices", "{{invoiceId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"invoices",
+								"{{invoiceId}}"
+							]
 						}
 					},
 					"event": [
@@ -643,8 +1076,14 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -652,8 +1091,12 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/invoices",
-							"host": ["{{baseUrl}}"],
-							"path": ["invoices"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"invoices"
+							]
 						}
 					},
 					"event": [
@@ -673,24 +1116,34 @@
 			]
 		},
 		{
-			"name": "4 - Payments (Wissem)",
+			"name": "4 - Payments",
 			"item": [
 				{
-					"name": "Create Payment (Partial)",
+					"name": "Create Payment - Manager",
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amount\": 2000,\n  \"method\": \"bank_transfer\",\n  \"note\": \"First partial payment\"\n}"
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amountPaid\": 2500,\n  \"paymentDate\": \"2026-03-20T00:00:00.000Z\",\n  \"method\": \"cheque\",\n  \"reference\": \"CHQ-12345\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/payments",
-							"host": ["{{baseUrl}}"],
-							"path": ["payments"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"payments"
+							]
 						}
 					},
 					"event": [
@@ -702,8 +1155,9 @@
 									"pm.test('Create payment returns 201', function () {",
 									"    pm.response.to.have.status(201);",
 									"});",
-									"pm.test('payment recorded', function () {",
-									"    pm.expect(pm.response.json().success).to.be.true;",
+									"pm.test('payment data is valid', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data.amountPaid).to.equal(2500);",
 									"});"
 								]
 							}
@@ -711,21 +1165,31 @@
 					]
 				},
 				{
-					"name": "Create Payment (Remaining)",
+					"name": "Create Payment - Agent Forbidden",
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amount\": 3000,\n  \"method\": \"cash\",\n  \"note\": \"Final payment - fully paid\"\n}"
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amountPaid\": 1000,\n  \"paymentDate\": \"2026-03-25T00:00:00.000Z\",\n  \"method\": \"bank_transfer\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/payments",
-							"host": ["{{baseUrl}}"],
-							"path": ["payments"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"payments"
+							]
 						}
 					},
 					"event": [
@@ -734,8 +1198,8 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test('Create payment returns 201', function () {",
-									"    pm.response.to.have.status(201);",
+									"pm.test('Agent cannot create payment (403)', function () {",
+									"    pm.response.to.have.status(403);",
 									"});"
 								]
 							}
@@ -743,16 +1207,31 @@
 					]
 				},
 				{
-					"name": "Verify Invoice Status After Payments",
+					"name": "Create Payment - Full Amount",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amountPaid\": 2500,\n  \"paymentDate\": \"2026-03-30T00:00:00.000Z\",\n  \"method\": \"bank_transfer\",\n  \"reference\": \"XFER-789\"\n}"
+						},
 						"url": {
-							"raw": "{{baseUrl}}/invoices/{{invoiceId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["invoices", "{{invoiceId}}"]
+							"raw": "{{baseUrl}}/payments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"payments"
+							]
 						}
 					},
 					"event": [
@@ -761,10 +1240,8 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test('Invoice is now paid', function () {",
-									"    var data = pm.response.json().data;",
-									"    pm.expect(data.status).to.eql('paid');",
-									"    pm.expect(data.amountPaid).to.eql(data.amountTotal);",
+									"pm.test('Full amount payment returns 201', function () {",
+									"    pm.response.to.have.status(201);",
 									"});"
 								]
 							}
@@ -776,17 +1253,27 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"amount\": -5\n}"
+							"raw": "{\n  \"amountPaid\": 100\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/payments",
-							"host": ["{{baseUrl}}"],
-							"path": ["payments"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"payments"
+							]
 						}
 					},
 					"event": [
@@ -795,7 +1282,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test('Invalid payment returns 400', function () {",
+									"pm.test('Missing required fields returns 400', function () {",
 									"    pm.response.to.have.status(400);",
 									"});"
 								]
@@ -813,8 +1300,14 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -822,8 +1315,12 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions"
+							]
 						}
 					},
 					"event": [
@@ -853,8 +1350,14 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -862,8 +1365,12 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions"
+							]
 						}
 					},
 					"event": [
@@ -888,8 +1395,14 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -897,8 +1410,12 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions"
+							]
 						}
 					},
 					"event": [
@@ -920,12 +1437,19 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions"
+							]
 						}
 					},
 					"event": [
@@ -952,14 +1476,24 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions?invoice={{invoiceId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions"
+							],
 							"query": [
-								{ "key": "invoice", "value": "{{invoiceId}}" }
+								{
+									"key": "invoice",
+									"value": "{{invoiceId}}"
+								}
 							]
 						}
 					},
@@ -982,14 +1516,24 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions?client={{clientId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions"
+							],
 							"query": [
-								{ "key": "client", "value": "{{clientId}}" }
+								{
+									"key": "client",
+									"value": "{{clientId}}"
+								}
 							]
 						}
 					},
@@ -1012,14 +1556,24 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions?actionType=call",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions"
+							],
 							"query": [
-								{ "key": "actionType", "value": "call" }
+								{
+									"key": "actionType",
+									"value": "call"
+								}
 							]
 						}
 					},
@@ -1042,12 +1596,20 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions/{{recoveryActionId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions", "{{recoveryActionId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions",
+								"{{recoveryActionId}}"
+							]
 						}
 					},
 					"event": [
@@ -1068,12 +1630,18 @@
 					]
 				},
 				{
-					"name": "Update Recovery Action (Admin)",
+					"name": "Update Recovery Action - Manager",
 					"request": {
 						"method": "PUT",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -1081,8 +1649,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions/{{recoveryActionId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions", "{{recoveryActionId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions",
+								"{{recoveryActionId}}"
+							]
 						}
 					},
 					"event": [
@@ -1107,8 +1680,14 @@
 					"request": {
 						"method": "PUT",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -1116,8 +1695,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions/{{recoveryActionId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions", "{{recoveryActionId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions",
+								"{{recoveryActionId}}"
+							]
 						}
 					},
 					"event": [
@@ -1139,8 +1723,14 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -1148,8 +1738,12 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions"
+							]
 						}
 					},
 					"event": [
@@ -1174,12 +1768,20 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions/invalid-id",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions", "invalid-id"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions",
+								"invalid-id"
+							]
 						}
 					},
 					"event": [
@@ -1201,7 +1803,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -1209,8 +1814,12 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions"
+							]
 						}
 					},
 					"event": [
@@ -1230,19 +1839,27 @@
 			]
 		},
 		{
-			"name": "6 - Statistics (Houssem)",
+			"name": "6 - Statistics",
 			"item": [
 				{
-					"name": "Stats Overview (Admin)",
+					"name": "Stats Overview - Manager",
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/stats/overview",
-							"host": ["{{baseUrl}}"],
-							"path": ["stats", "overview"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"overview"
+							]
 						}
 					},
 					"event": [
@@ -1268,16 +1885,24 @@
 					]
 				},
 				{
-					"name": "Stats Invoices (Admin)",
+					"name": "Stats Invoices - Manager",
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/stats/invoices",
-							"host": ["{{baseUrl}}"],
-							"path": ["stats", "invoices"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"invoices"
+							]
 						}
 					},
 					"event": [
@@ -1300,16 +1925,24 @@
 					]
 				},
 				{
-					"name": "Stats Agents (Admin)",
+					"name": "Stats Agents - Manager",
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/stats/agents",
-							"host": ["{{baseUrl}}"],
-							"path": ["stats", "agents"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"agents"
+							]
 						}
 					},
 					"event": [
@@ -1336,12 +1969,20 @@
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{agentToken}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{agentToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/stats/overview",
-							"host": ["{{baseUrl}}"],
-							"path": ["stats", "overview"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"overview"
+							]
 						}
 					},
 					"event": [
@@ -1365,8 +2006,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/stats/overview",
-							"host": ["{{baseUrl}}"],
-							"path": ["stats", "overview"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"overview"
+							]
 						}
 					},
 					"event": [
@@ -1389,16 +2035,24 @@
 			"name": "7 - Cleanup",
 			"item": [
 				{
-					"name": "Delete Recovery Action (Admin)",
+					"name": "Delete Recovery Action - Manager",
 					"request": {
 						"method": "DELETE",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/recovery-actions/{{recoveryActionId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["recovery-actions", "{{recoveryActionId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"recovery-actions",
+								"{{recoveryActionId}}"
+							]
 						}
 					},
 					"event": [
@@ -1416,16 +2070,24 @@
 					]
 				},
 				{
-					"name": "Delete Invoice (Admin)",
+					"name": "Delete Invoice - Manager",
 					"request": {
 						"method": "DELETE",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/invoices/{{invoiceId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["invoices", "{{invoiceId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"invoices",
+								"{{invoiceId}}"
+							]
 						}
 					},
 					"event": [
@@ -1443,16 +2105,24 @@
 					]
 				},
 				{
-					"name": "Delete Client (Admin)",
+					"name": "Delete Client - Manager",
 					"request": {
 						"method": "DELETE",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" }
+							{
+								"key": "Authorization",
+								"value": "Bearer {{managerToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/clients/{{clientId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["clients", "{{clientId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients",
+								"{{clientId}}"
+							]
 						}
 					},
 					"event": [
